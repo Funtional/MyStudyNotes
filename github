@@ -56,3 +56,59 @@
 推送成功后，可以立刻在github页面中看到远程库的内容已经和本地一模一样了。
   git push origin master 把本地master分支的最新修改推送到github上了，现在你就拥有了真正的分布式版本库了。
   
+6. 克隆
+  git clone https://github.com/Funtional/Dress
+  
+7. 创建与合并分支。
+在版本回退里，你已经知道，每次提交，Git都把它们串成一条时间线，这条时间线就是一个分支。截止到目前，只有一条时间线，在Git里，这个分支叫主分支，
+即master分支。HEAD严格来说不是指向提交，而是指向master，master才是指向提交的，所以，HEAD指向的就是当前分支。
+首先，我们来创建dev分支，然后切换到dev分支上。如下操作：
+  git checkout -b dev 命令加上–b参数表示创建并切换，相当于2条命令 git branch dev 和 git checkout dev
+  git branch 查看当前分支
+  
+修改文件后，体检到dev分支，下面会用于merge到master分支
+  git merge dev 在master分支上执行此命令，把dev分支上的内容合并到分支master上了
+执行merge命令的输出为：
+  $ git merge dev
+  Updating d0dd4ac..47bc84a
+  Fast-forward
+  readme.txt | 3 ++-
+  1 file changed, 2 insertions(+), 1 deletion(-)
+注意到上面的Fast-forward信息，Git告诉我们，这次合并是“快进模式”，也就是直接把master指向dev的当前提交，所以合并速度非常快。
+
+  git branch -d dev 合并完成后，可以删除dev分支
+再创建一个分支fenzhi1，用于test解决冲突。fenzhi1先修改了readme.txt，然后add、commit；然后切换到master，修改readme.txt，然后add、commit，
+此时，在master分支上merge分支fenzhi1的内容就会出现如下输入：
+  $ git merge fenzhi1
+  Auto-merging readme.txt
+  CONFLICT (content): Merge conflict in readme.txt
+  Automatic merge failed; fix conflicts and then commit the result.
+可以使用git status查看当前状态如下：
+  lenovo@LAPTOP-79HSVIUH MINGW64 /c/liaodehe/MyProjects/for_github/git_test_1_create_repository (master|MERGING)
+  $ git status
+  On branch master
+  Your branch is ahead of 'origin/master' by 2 commits.
+    (use "git push" to publish your local commits)
+
+  You have unmerged paths.
+    (fix conflicts and run "git commit")
+    (use "git merge --abort" to abort the merge)
+
+  Unmerged paths:
+    (use "git add <file>..." to mark resolution)
+
+        both modified:   readme.txt
+
+  no changes added to commit (use "git add" and/or "git commit -a")
+如上，可以看到分支从master变成了master|MERGING， 查看冲突的文件readme.txt可以看到如下冲突信息：
+  <<<<<<< HEAD
+  from branch master
+  =======
+  from branch fenzhi1
+  >>>>>>> fenzhi1
+Git用<<<<<<<，=======，>>>>>>>标记出不同分支的内容，其中<<<HEAD是指主分支修改的内容，>>>>>fenzhi1 是指fenzhi1上修改的内容。
+在这种情况下，我们只能在当前分支master|MERGING手动修改本地readme.txt，然后add、commit ， 
+按我理解commit 操作才是真正把fenzhi1上的内容merge到了master，可以再次使用 git log 命令查看分支合并的情况
+  
+
+
